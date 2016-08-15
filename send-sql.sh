@@ -29,7 +29,7 @@ case "$1" in
     analyze)
 	echo "explain analyze" >> $LASTCMD
 	cat >> $LASTCMD
-	tmux respawn-pane -t $PANEID ". $GPCONNECT; psql -f $LASTCMD 2>&1  "
+	tmux respawn-pane -t $PANEID ". $GPCONNECT; psql -f $LASTCMD 2>&1 |`dirname $0`/hlplan.sh "
 	;;
 
     *)
