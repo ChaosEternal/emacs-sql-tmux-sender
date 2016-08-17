@@ -5,20 +5,25 @@
   (let ((end
 	 (save-excursion
 	  (goto-char (point-min))
-	  (search-forward-regexp "^---* *ENDHEADER[ \-]*$" (point-max) t)
+	  (search-forward-regexp "^---* *END *\\(HEADER\\)*[ \\-]*$" (point-max) t)
 	  (point))))
     (shell-command-on-region (point-min) end
 			     "send-sql.sh reset")
     end
     ))
 
-
-(defun sql-send-region (start end)
-   (interactive "r")
+(defun sql-send-area (start end analyze)
    (let ((header-end (sql-prepare-with-header)))
      (shell-command-on-region 
       (if (> header-end start) header-end start) end
-      "send-sql.sh")))
+      (cond ((string-equal "normal" analyze) "send-sql.sh")
+	    ((and (not (string-equal analyze ""))
+		  (eq 0 (string-match analyze "analyze"))) "send-sql.sh analyze")
+	    (t "send-sql.sh explain")))))
+
+(defun sql-send-region (start end)
+   (interactive "r")
+   (sql-send-area start end "normal"))
 
 
 (defun sql-send-paragraph ()
@@ -36,11 +41,7 @@
 
 (defun sql-explain-region (start end &optional analyze)
   (interactive "r\nsExplain(e) or Explain Analyze(a): ")
-   (let ((header-end (sql-prepare-with-header)))
-     (shell-command-on-region 
-      (if (> header-end start) header-end start) end
-      (if (eq 0 (string-match analyze "analyze")) "send-sql.sh analyze"
-	"send-sql.sh explain"))))
+  (sql-send-area start end analyze))
 
 
 (define-key sql-mode-map (kbd "C-c M-r")
