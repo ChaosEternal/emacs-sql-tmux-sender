@@ -10,11 +10,16 @@ XC[cyan]=$'\e[1;36m'
 RS=$'\e[0m'
 
 
-sed -e "/\(^ *->\)\|\(^ [^ ]\)/ {s/Hash[^(]*\|Result/${XC[green]}&$RS/;
+sed -e "/\(^ *->\)\|\(^ [^ ]\)/ {
+                 s/Hash[^(]*\|Result\|BitmapAnd\|BitmapOr\|Limit/${XC[green]}&$RS/;
+                 s/Split\|Partition Selector/${XC[green]}&$RS/;
                  s/[^>]* Scan/${XC[cyan]}&$RS/;
-                 s/Redistribute Motion\|Gather Motion/${XC[magenta]}&$RS/;
-                 s/Broadcast Motion\|Append \|Window/${XC[yello]}&$RS/;
-                 s/Sort\|Unique\|Materialize\|Nested Loop /${XC[red]}&$RS/;
+                 s/Insert\|Delete\|Update\|DML [^(]*\|Assert\|RowTrigger/${XC[cyan]}&$RS/;
+                 s/\(Explicit *\)*Redistribute Motion\|Gather Motion/${XC[magenta]}&$RS/;
+                 s/Broadcast Motion\|Append \|Window\|\<Aggregate\|GroupAggregate/${XC[yello]}&$RS/;
+                 s/Repeat\|Sequence\|Merge [^(]*\|SetOp [^(]*/${XC[yello]}&$RS/;
+                 s/Motion [^(]*\|Sort\|Unique\|Materialize\|Nested Loop [^(]*/${XC[red]}&$RS/;
+                 s/Not-In/${XC[red]}&$RS/;
                  s/cost=[0-9]\{8,\}\.[0-9]*\.\.[0-9.]*/${XC[red]}&$RS/;
                  s/cost=[0-9]\{0,\}\.[0-9]*\.\.[0-9]\{8,\}\.[0-9]*/${XC[red]}&$RS/;
                  s/rows=[0-9]\{8,\}\>/${XC[red]}&$RS/;
